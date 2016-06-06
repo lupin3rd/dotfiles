@@ -11,34 +11,49 @@
 
 set $mod Mod4
 
-set $black       #2c2836
-set $darkblack   #73707e
-set $red         #bb7473
-set $darkred     #cf9fa4
-set $green       #68b782
-set $darkgreen   #9acbad
-set $yellow      #abb773
-set $darkyellow  #c5cba4
-set $blue        #7865c5
-set $darkblue    #a396d9
-set $magenta     #bb65b6
-set $darkmagenta #cf96cf
-set $cyan        #68a8c5
-set $darkcyan    #9ac1d9
-set $white       #f1edfb
-set $darkwhite   #f1edfb
-set $background  #133B47
+set background  #263238
+set foreground  #eceff1
+set cursor      #b3bfc7
+set color0      #263238
+set color8      #37474f
+set color1      #ff9800
+set color9      #ffa74d
+set color2      #8bc34a
+set color10     #9ccc65
+set color3      #ffc107
+set color11     #ffa000
+set color4      #03a9f4
+set color12     #81d4fa
+set color5      #f4246b
+set color13     #ef4981
+set color6      #009688
+set color14     #26a69a
+set color7      #cfd8dc
+set color15     #eceff1
 
-set $ws1  "1:  "
-set $ws2  "2:  "
-set $ws3  "3:  "
-set $ws4  "4:  "
-set $ws5  "5:  "
-set $ws6  "6:  "
-set $ws7  "7:  "
-set $ws8  "8:  "
-set $ws9  "9:  "
-set $ws10 "10:  "
+set $FOCUS #18A4DB
+set $UNFOCUS #127196
+set $BORDERF #00c3FF
+set $BORDERU #00245E
+
+
+# colours				border      bg		  text	    indicator
+client.focused 		  	$color12    $BORDERF  $FOCUS    $BORDERF
+client.focused_inactive	$color12    $UNFOCUS  $UNFOCUS  $UNFOCUS
+client.unfocused		$color4     $BORDERU  $UNFOCUS  $BORDERU
+client.urgent			$color5     $FOCUS    $FOCUS    $FOCUS
+client.background		$UNFOCUS
+
+set $ws1  "1 "
+set $ws2  "2 "
+set $ws3  "3 "
+set $ws4  "4 "
+set $ws5  "5 "
+set $ws6  "6 "
+set $ws7  "7 "
+set $ws8  "8 "
+set $ws9  "9 "
+set $ws10 "10 "
 
 set $default_gaps_inner 10
 set $default_gaps_outer 5
@@ -49,14 +64,13 @@ smart_gaps on
 # Do not follow the mouse
 focus_follows_mouse no
 
+# Special ws gaps
 workspace $ws1 gaps inner 0
 workspace $ws1 gaps outer 0
-workspace $ws9 gaps inner 0
-workspace $ws9 gaps outer 0
 workspace $ws10 gaps inner 0
 workspace $ws10 gaps outer 0
 
-workspace_auto_back_and_forth yes
+workspace_auto_back_and_forth no
 force_display_urgency_hint 0 ms
 focus_on_window_activation urgent
 
@@ -72,7 +86,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec rofi -show run
 
 # change focus
 bindsym $mod+j focus left
@@ -153,8 +167,6 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -202,10 +214,10 @@ set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) re
 mode "$mode_system" {
     bindsym l exec --no-startup-id $locker, mode "default"
     bindsym e exec --no-startup-id i3-msg exit, mode "default"
-    bindsym s exec --no-startup-id $locker & sudo pm-suspend, mode "default"
-    bindsym h exec --no-startup-id $locker & sudo pm-hibernate, mode "default"
-    bindsym r exec --no-startup-id $lockersudo & shutdown -r now, mode "default"
-    bindsym p exec --no-startup-id $locker & sudo shutdown -h now, mode "default"
+    bindsym s exec --no-startup-id $locker && sudo pm-suspend, mode "default"
+    bindsym h exec --no-startup-id $locker && sudo pm-hibernate, mode "default"
+    bindsym r exec --no-startup-id $locker && sudo shutdown -r now, mode "default"
+    bindsym p exec --no-startup-id $locker && sudo shutdown -h now, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -254,27 +266,29 @@ bar {
         position top
         height 16
         font pango:Hack, FontAwesome 8
-        strip_workspace_numbers yes
+        strip_workspace_numbers no
         colors {
-                statusline         $white
-                background         $background
-                separator          $darkgreen
-
-#                                  BORDER      BACKGROUND  TEXT
-                focused_workspace  $background $background $darkgreen
-                inactive_workspace $background $background $white
-                urgent_workspace   $red        $red        $background
+            background #26323888
+            statusline #eceff1ff
+            separator #cfd8dcff
+            # colors           outline  background  number
+            focused_workspace	#f4246bff  $f4246bff    $eceff1ff
+            active_workspace	$37474fff  $37474fff    $81d4faff
+            inactive_workspace	$37474fff  $37474fff    $81d4faff
+            urgent_workspace	#ffc107ff  $ffc107ff    $37474fff
         }
 }
 
 # autostart
+# wallpaper
 exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
-exec --no-startup-id compton -b
+# compton
+exec --no-startup-id compton -o 0.3 --backend glx --vsync opengl -b -i 1.0 --config $HOME/.config/compton/compton.conf &
 exec --no-startup-id wicd-gtk -t &
 exec --no-startup-id dunst &
 
 # fix graphics glitch
-for_window [class="^.*"] border pixel 0
+for_window [class="^.*"] border pixel 2
 for_window [class=(?i)termite] border normal 5
 
 for_window [window_role="pop-up"] floating enable
@@ -296,4 +310,5 @@ for_window [instance="__nmtui"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable, border normal
 for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down 34px
 
-assign [class="(?i)chromium"]                       $ws1
+assign [class="(?i)chromium"] $ws1
+assign [class="(?i)iceweasel"] $ws10
