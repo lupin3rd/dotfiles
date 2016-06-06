@@ -11,6 +11,24 @@
 
 set $mod Mod4
 
+set $black       #2c2836
+set $darkblack   #73707e
+set $red         #bb7473
+set $darkred     #cf9fa4
+set $green       #68b782
+set $darkgreen   #9acbad
+set $yellow      #abb773
+set $darkyellow  #c5cba4
+set $blue        #7865c5
+set $darkblue    #a396d9
+set $magenta     #bb65b6
+set $darkmagenta #cf96cf
+set $cyan        #68a8c5
+set $darkcyan    #9ac1d9
+set $white       #f1edfb
+set $darkwhite   #f1edfb
+set $background  #133B47
+
 set $ws1  "1:  "
 set $ws2  "2:  "
 set $ws3  "3:  "
@@ -27,6 +45,9 @@ set $default_gaps_outer 5
 gaps inner $default_gaps_inner
 gaps outer $default_gaps_outer
 smart_gaps on
+
+# Do not follow the mouse
+focus_follows_mouse no
 
 workspace $ws1 gaps inner 0
 workspace $ws1 gaps outer 0
@@ -176,6 +197,22 @@ mode "$mode_gaps" {
     bindsym Escape mode "default"
 }
 
+set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $locker, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id $locker & sudo pm-suspend, mode "default"
+    bindsym h exec --no-startup-id $locker & sudo pm-hibernate, mode "default"
+    bindsym r exec --no-startup-id $lockersudo & shutdown -r now, mode "default"
+    bindsym p exec --no-startup-id $locker & sudo shutdown -h now, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Pause mode "$mode_system"
+
 mode "$mode_gaps_inner" {
     bindsym plus  gaps inner current plus 5
     bindsym minus gaps inner current minus 5
@@ -206,8 +243,38 @@ mode "$mode_gaps_outer" {
     bindsym Escape mode "default"
 }
 
+# screenshot
+bindsym --release $mod+Print exec scrot $HOME/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+bindsym --release $mod+Shift+Print exec scrot -s $HOME/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+bar {
+        status_command python3 $HOME/.config/i3/scripts/pystatus.py
+        position top
+        height 16
+        font pango:Hack, FontAwesome 8
+        strip_workspace_numbers yes
+        colors {
+                statusline         $white
+                background         $background
+                separator          $darkgreen
+
+#                                  BORDER      BACKGROUND  TEXT
+                focused_workspace  $background $background $darkgreen
+                inactive_workspace $background $background $white
+                urgent_workspace   $red        $red        $background
+        }
+}
+
+# autostart
+exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
+exec --no-startup-id compton -b
+exec --no-startup-id wicd-gtk -t &
+exec --no-startup-id dunst &
+
 # fix graphics glitch
-#for_window [class="^.*"] border pixel 0
+for_window [class="^.*"] border pixel 0
 for_window [class=(?i)termite] border normal 5
 
 for_window [window_role="pop-up"] floating enable
@@ -226,27 +293,7 @@ for_window [class="(?i)blueman"] floating enable
 for_window [instance="__scratchpad"] floating enable
 for_window [instance="__nmtui"] floating enable
 
-for_window [class="(?i)pavucontrol"] floating enable, border normal, move position mouse
+for_window [class="(?i)pavucontrol"] floating enable, border normal
 for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down 34px
 
-assign [class="(?i)chrome"]                       $ws1
-
-# screenshot
-bindsym --release Print exec scrot $HOME/Pictures/screenshot-$(date +%Y-%m-%d).png
-bindsym --release Shift+Print exec scrot -s $HOME/Pictures/screenshot-$(date +%Y-%m-%d).png
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-        status_command python3 $HOME/.config/i3/scripts/pystatus.py
-        position top
-        height 20
-        font pango:Hack, FontAwesome 11
-        strip_workspace_numbers yes
-}
-
-# AUTOSTART
-exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.jpg
-exec --no-startup-id compton -b
-exec --no-startup-id wicd-gtk -t &
-exec --no-startup-id dunst &
+assign [class="(?i)chromium"]                       $ws1
