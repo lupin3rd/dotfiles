@@ -47,11 +47,11 @@ client.background		$UNFOCUS
 set $ws1  "1 "
 set $ws2  "2 "
 set $ws3  "3 "
-set $ws4  "4 "
-set $ws5  "5 "
-set $ws6  "6 "
-set $ws7  "7 "
-set $ws8  "8 "
+set $ws4  "4 "
+set $ws5  "5 "
+set $ws6  "6 "
+set $ws7  "7 "
+set $ws8  "8 "
 set $ws9  "9 "
 set $ws10 "10 "
 
@@ -80,13 +80,14 @@ font pango:Hack, FontAwesome 12
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec urxvt
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# start dmenu (a program launcher)
+# start rofi (a program launcher)
 bindsym $mod+d exec rofi -show run
+bindsym $mod+Tab exec rofi -show window
 
 # change focus
 bindsym $mod+j focus left
@@ -149,7 +150,6 @@ bindsym $mod+7 workspace $ws7
 bindsym $mod+8 workspace $ws8
 bindsym $mod+9 workspace $ws9
 bindsym $mod+0 workspace $ws10
-bindsym $mod+Tab workspace back_and_forth
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
@@ -262,7 +262,8 @@ bindsym --release $mod+Shift+Print exec scrot -s $HOME/Pictures/screenshot-$(dat
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command python3 $HOME/.config/i3/scripts/pystatus.py
+        #status_command python3 $HOME/.config/i3/scripts/pystatus.py
+        status_command i3blocks -c $HOME/.config/i3blocks/i3blocks.conf
         position top
         height 16
         font pango:Hack, FontAwesome 8
@@ -280,6 +281,7 @@ bar {
 }
 
 # autostart
+exec --no-startup-id xfce4-power-manager &
 # wallpaper
 exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
 # compton
@@ -293,12 +295,11 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+#bindsym XF86MonBrightnessUp exec xbacklight -inc 10
+#bindsym XF86MonBrightnessDown exec xbacklight -dec 10
 
 # fix graphics glitch
 for_window [class="^.*"] border pixel 2
-for_window [class=(?i)termite] border normal 5
 
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
@@ -308,8 +309,6 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-for_window [class="(?i)gsimplecal"] floating enable, move position mouse
-for_window [class="(?i)qemu-system"] floating enable
 for_window [class="(?i)VirtualBox" title="(?i)Manager"] floating enable
 for_window [class="(?i)blueman"] floating enable
 
@@ -320,4 +319,7 @@ for_window [class="(?i)pavucontrol"] floating enable, border normal
 for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down 34px
 
 assign [class="(?i)chromium"] $ws1
+assign [class="(?i)urxvt"] $ws2
+assign [class="(?i)atom"] $ws3
+assign [class="(?i)icedove"] $ws9
 assign [class="(?i)iceweasel"] $ws10
