@@ -209,7 +209,8 @@ mode "$mode_gaps" {
     bindsym Escape mode "default"
 }
 
-set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
+#set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
+set $locker $HOME/.config/i3/scripts/lock
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id $locker, mode "default"
@@ -283,12 +284,15 @@ bar {
 # autostart
 exec --no-startup-id /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 exec --no-startup-id xfce4-power-manager &
+exec --no-startup-id xfce4-volumed &
+exec --no-startup-id start-pulseaudio-x11 &
 # wallpaper
 exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
 # compton
 exec --no-startup-id compton -o 0.3 --backend glx --vsync opengl -b -i 1.0 --config $HOME/.config/compton/compton.conf &
-exec --no-startup-id wicd-gtk -t &
 exec --no-startup-id dunst &
+exec --no-startup-id wicd-gtk -t &
+exec --no-startup-id parcellite &
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
@@ -306,6 +310,8 @@ for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
 for_window [window_role="task_dialog"] floating enable
 for_window [window_role="Preferences"] floating enable
+for_window [title="File Operation Progress"] floating enable
+for_window [class="Wicd-client.py"] floating enable
 
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
