@@ -281,6 +281,7 @@ bar {
 }
 
 # autostart
+exec --no-startup-id /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 exec --no-startup-id xfce4-power-manager &
 # wallpaper
 exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
