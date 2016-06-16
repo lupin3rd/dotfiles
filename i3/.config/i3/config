@@ -11,70 +11,44 @@
 
 set $mod Mod4
 
-set background  #263238
-set foreground  #eceff1
-set cursor      #b3bfc7
-set color0      #263238
-set color8      #37474f
-set color1      #ff9800
-set color9      #ffa74d
-set color2      #8bc34a
-set color10     #9ccc65
-set color3      #ffc107
-set color11     #ffa000
-set color4      #03a9f4
-set color12     #81d4fa
-set color5      #f4246b
-set color13     #ef4981
-set color6      #009688
-set color14     #26a69a
-set color7      #cfd8dc
-set color15     #eceff1
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango: Noto Sans 10, FontAwesome 10
 
-set $FOCUS #18A4DB
-set $UNFOCUS #127196
-set $BORDERF #00c3FF
-set $BORDERU #00245E
-
-
-# colours				border      bg		  text	    indicator
-client.focused 		  	$color12    $BORDERF  $FOCUS    $BORDERF
-client.focused_inactive	$color12    $UNFOCUS  $UNFOCUS  $UNFOCUS
-client.unfocused		$color4     $BORDERU  $UNFOCUS  $BORDERU
-client.urgent			$color5     $FOCUS    $FOCUS    $FOCUS
-client.background		$UNFOCUS
-
-set $ws1  "1 "
-set $ws2  "2 "
-set $ws3  "3 "
-set $ws4  "4 "
-set $ws5  "5 "
-set $ws6  "6 "
-set $ws7  "7 "
-set $ws8  "8 "
-set $ws9  "9 "
-set $ws10 "10 "
-
+# Gaps
 set $default_gaps_inner 10
-set $default_gaps_outer 5
+set $default_gaps_outer 0
 gaps inner $default_gaps_inner
 gaps outer $default_gaps_outer
-smart_gaps on
+smart_borders on
 
 # Do not follow the mouse
 focus_follows_mouse no
 
-# Special ws gaps
-workspace $ws1 gaps inner 0
-workspace $ws1 gaps outer 0
-workspace $ws10 gaps inner 0
-workspace $ws10 gaps outer 0
-
 workspace_auto_back_and_forth no
-force_display_urgency_hint 0 ms
-focus_on_window_activation urgent
 
-font pango:Hack, FontAwesome 12
+# Highlight Colors
+# Emerald:	#19b898
+# Green: 	#1dd260
+# Blue: 	#0f73fb
+
+# set color aliases
+set $bg-color            #2f343f
+set $inactive-bg-color   #202020
+set $text-color          #d6dae4
+set $inactive-text-color #808080
+set $urgent-bg-color     #de342e
+set $highlight-color     #0f73fb
+
+# window colors
+#                       border              background         text                 indicator
+client.focused          $bg-color           $highlight-color   $text-color          #19b898
+client.unfocused        $bg-color	          $bg-color	         $inactive-text-color $bg-color
+client.focused_inactive $bg-color           $bg-color	         $inactive-text-color $bg-color
+client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $bg-color
+
+# hide edge indicator
+#hide_edge_borders both
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -138,6 +112,17 @@ bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
+
+set $ws1  "1 "
+set $ws2  "2 "
+set $ws3  "3 "
+set $ws4  "4 "
+set $ws5  "5 "
+set $ws6  "6 "
+set $ws7  "7 "
+set $ws8  "8 "
+set $ws9  "9 "
+set $ws10 "10 "
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -209,8 +194,8 @@ mode "$mode_gaps" {
     bindsym Escape mode "default"
 }
 
-#set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
-set $locker $HOME/.config/i3/scripts/lock
+set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
+#set $locker $HOME/.config/i3/scripts/lock &
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id $locker, mode "default"
@@ -263,33 +248,30 @@ bindsym --release $mod+Shift+Print exec scrot -s $HOME/Pictures/screenshot-$(dat
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        #status_command python3 $HOME/.config/i3/scripts/pystatus.py
         status_command i3blocks -c $HOME/.config/i3blocks/i3blocks.conf
         position top
-        height 16
-        font pango:Hack, FontAwesome 8
+        #height 16
         strip_workspace_numbers no
+        font pango: Noto Sans 10, FontAwesome 10
         colors {
-            background #26323888
-            statusline #eceff1ff
-            separator #cfd8dcff
-            # colors           outline  background  number
-            focused_workspace	#f4246bff  $f4246bff    $eceff1ff
-            active_workspace	$37474fff  $37474fff    $81d4faff
-            inactive_workspace	$37474fff  $37474fff    $81d4faff
-            urgent_workspace	#ffc107ff  $ffc107ff    $37474fff
+          background $bg-color
+	        separator #757575
+          #                  border             background         text
+          focused_workspace  $bg-color          $highlight-color   $text-color
+          inactive_workspace $bg-color          $bg-color          $text-color
+          urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
         }
 }
+
+# wallpaper
+exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
 
 # autostart
 exec --no-startup-id /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 exec --no-startup-id xfce4-power-manager &
 exec --no-startup-id xfce4-volumed &
 exec --no-startup-id start-pulseaudio-x11 &
-# wallpaper
-exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
-# compton
-exec --no-startup-id compton -o 0.3 --backend glx --vsync opengl -b -i 1.0 --config $HOME/.config/compton/compton.conf &
+exec --no-startup-id compton -b --config $HOME/.config/compton/compton.conf &
 exec --no-startup-id dunst &
 exec --no-startup-id wicd-gtk -t &
 exec --no-startup-id parcellite &
