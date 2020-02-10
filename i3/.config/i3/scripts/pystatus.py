@@ -9,10 +9,10 @@ status = Status(standalone=True)
 
 
 status.register("pulseaudio",
-    format="♪ {volume_bar}",
+    format=" {volume_bar}",
     multi_colors=True,
     color_unmuted='#00ff00',
-    vertical_bar_width=2,
+    vertical_bar_width=1,
     bar_type='vertical')
 
 status.register("clock",
@@ -47,7 +47,7 @@ status.register("battery",
 #
 # Note: the network module requires PyPI package netifaces
 status.register("network",
-    interface="wlan0",
+    interface="wlo1",
     format_up="{v4cidr}",)
 
 status.register("mem_bar",
@@ -59,17 +59,17 @@ status.register("mem_bar",
 # 42/128G [86G]
 status.register("disk",
     path="/",
-    format="HD: {percentage_used}%",)
+    format=" {percentage_used}%",)
 
-status.register('cpu_usage_bar',
-  cpu='usage_cpu0',
-  format='{usage_bar_cpu0}',
-  bar_type='vertical'
+status.register('cpu_usage',
+  format='{usage_all}',
+  format_all='{usage:02}%'
   )
 
-status.register('cpu_usage_bar',
-  cpu='usage_cpu1',
-  format='{usage_bar_cpu1}',
-  bar_type='vertical')
+#status.register('window_title',
+#  format='{title}',
+#  always_show=False,
+#  max_width=40
+#  )
 
 status.run()

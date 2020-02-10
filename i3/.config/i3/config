@@ -13,14 +13,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango: Noto Sans 10, FontAwesome 10
-
-# Gaps
-set $default_gaps_inner 10
-set $default_gaps_outer 0
-gaps inner $default_gaps_inner
-gaps outer $default_gaps_outer
-smart_borders on
+font pango:Inconsolata 8.8
 
 # Do not follow the mouse
 focus_follows_mouse no
@@ -43,12 +36,12 @@ set $highlight-color     #0f73fb
 # window colors
 #                       border              background         text                 indicator
 client.focused          $bg-color           $highlight-color   $text-color          #19b898
-client.unfocused        $bg-color	          $bg-color	         $inactive-text-color $bg-color
-client.focused_inactive $bg-color           $bg-color	         $inactive-text-color $bg-color
+client.unfocused        $bg-color	    $bg-color	       $inactive-text-color $bg-color
+client.focused_inactive $bg-color           $bg-color	       $inactive-text-color $bg-color
 client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $bg-color
 
 # hide edge indicator
-#hide_edge_borders both
+hide_edge_borders smart
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -179,21 +172,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-set $mode_gaps gaps
-set $mode_gaps_outer outer gaps
-set $mode_gaps_inner inner gaps
-bindsym $mod+Shift+g mode "$mode_gaps"
-mode "$mode_gaps" {
-    bindsym o      mode "$mode_gaps_outer"
-    bindsym i      mode "$mode_gaps_inner"
-
-    bindsym 0      mode "default", exec --no-startup-id i3-msg "gaps inner current set 0" && i3-msg "gaps outer current set 0"
-    bindsym d      mode "default", exec --no-startup-id i3-msg "gaps inner current set $default_gaps_inner" && i3-msg "gaps outer current set $default_gaps_outer"
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
 set $locker i3lock -i $HOME/.config/i3/bg/starwars.png
 #set $locker $HOME/.config/i3/scripts/lock &
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
@@ -211,35 +189,6 @@ mode "$mode_system" {
 }
 bindsym $mod+Pause mode "$mode_system"
 
-mode "$mode_gaps_inner" {
-    bindsym plus  gaps inner current plus 5
-    bindsym minus gaps inner current minus 5
-    bindsym 0     mode "default", gaps inner current set 0
-    bindsym d     mode "default", gaps inner current set $default_gaps_inner
-
-    bindsym Shift+plus  gaps inner all plus 5
-    bindsym Shift+minus gaps inner all minus 5
-    bindsym Shift+0     mode "default", gaps inner all set 0
-    bindsym Shift+d     mode "default", gaps inner all set $default_gaps_inner
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-mode "$mode_gaps_outer" {
-    bindsym plus  gaps outer current plus 5
-    bindsym minus gaps outer current minus 5
-    bindsym 0     mode "default", gaps outer current set 0
-    bindsym d     mode "default", gaps outer current set $default_gaps_outer
-
-    bindsym Shift+plus  gaps outer all plus 5
-    bindsym Shift+minus gaps outer all minus 5
-    bindsym Shift+0     mode "default", gaps outer all set 0
-    bindsym Shift+d     mode "default", gaps outer all set $default_gaps_outer
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
 
 # screenshot
 bindsym --release $mod+Print exec scrot $HOME/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
@@ -248,11 +197,11 @@ bindsym --release $mod+Shift+Print exec scrot -s $HOME/Pictures/screenshot-$(dat
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3blocks -c $HOME/.config/i3blocks/i3blocks.conf
+        #font pango:Inconsolata 8.8
+        status_command $HOME/.config/i3/bumblebee-status/bumblebee-status -m title cpu memory nic pasink date time battery -p memory.format="{used}" nic.states=^down traffic.exclude=lo,vmnet1,vmnet8,lxcbr0,docker0,vboxnet,veth,wlp,wwp,br,macvtap0,vibr0,vibr,vnet0,virbr0,virbr1 nic.exclude=lo,docker,vmnet,lxcbr,vboxnet,veth,br,vnet time.format="%H:%M" date.format="%d %b %Y" -t iceberg-powerline
         position top
         #height 16
         strip_workspace_numbers no
-        font pango: Noto Sans 10, FontAwesome 10
         colors {
           background $bg-color
 	        separator #757575
@@ -269,12 +218,13 @@ exec_always --no-startup-id feh --bg-scale $HOME/.config/i3/bg/starwars.png
 # autostart
 exec --no-startup-id /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 exec --no-startup-id xfce4-power-manager &
-exec --no-startup-id xfce4-volumed &
+#exec --no-startup-id xfce4-volumed &
 exec --no-startup-id start-pulseaudio-x11 &
 exec --no-startup-id compton -b --config $HOME/.config/compton/compton.conf &
 exec --no-startup-id dunst &
 exec --no-startup-id wicd-gtk -t &
 exec --no-startup-id parcellite &
+exec --no-startup-id emacs --daemon &
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
